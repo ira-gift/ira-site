@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ира — самая прекрасная</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --blush-50:  #fff7fa;
+        --blush-100: #ffe6f0;
+        --blush-200: #ffd1e3;
+        --blush-300: #f7b5d0;
+        --blush-400: #ec97bd;
+        --blush-500: #df7ba9;
+        --deep-rose: #8a4e66;
+        --text: #6d3f52;
+        --radius: 24px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        color: var(--text);
+        background:
+            radial-gradient(900px 500px at 10% -10%, var(--blush-100), transparent 60%),
+            radial-gradient(800px 600px at 110% 10%, var(--blush-200), transparent 55%),
+            linear-gradient(180deg, var(--blush-50), #ffffff 60%, var(--blush-50));
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---- NAV ---- */
+    .nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(255, 247, 250, 0.85);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.9);
+        padding: 14px 20px;
+    }
+    .nav-inner {
+        max-width: 1080px;
+        margin: 0 auto;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .nav-btn {
+        padding: 10px 20px;
+        font-family: inherit;
+        font-size: 13px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-weight: 500;
+        color: var(--deep-rose);
+        background: rgba(255,255,255,0.7);
+        border: 1px solid rgba(255,255,255,0.95);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+    .nav-btn:hover { background: var(--blush-200); }
+    .nav-btn.active {
+        background: linear-gradient(135deg, var(--blush-500), var(--blush-400));
+        color: #fff;
+        border-color: transparent;
+    }
+
+    /* ---- LAYOUT ---- */
+    .wrap {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 60px 24px 80px;
+    }
+    .page { display: none; }
+    .page.active {
+        display: block;
+        animation: pageIn 0.5s ease;
+    }
+    @keyframes pageIn {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .label {
+        font-size: 12px;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: var(--blush-500);
+        font-weight: 500;
+        margin-bottom: 14px;
+        text-align: center;
+    }
+    .title {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+        font-size: clamp(34px, 5.5vw, 56px);
+        line-height: 1.14;
+        color: var(--deep-rose);
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    .lead {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.75;
+        max-width: 620px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    /* ---- HERO ---- */
+    .hero { text-align: center; padding: 40px 0 20px; }
+    .hero-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+        font-size: clamp(80px, 20vw, 180px);
+        line-height: 0.9;
+        background: linear-gradient(135deg, var(--blush-500), var(--blush-300) 60%, var(--deep-rose));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-bottom: 24px;
+    }
+    .hero-badges {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 30px;
+    }
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.8);
+        border: 1px solid rgba(255,255,255,0.95);
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--deep-rose);
+        font-weight: 500;
+        box-shadow: 0 8px 22px -14px rgba(223,123,169,0.5);
+    }
+    .hero-badge span { font-size: 16px; letter-spacing: 0; }
+
+    /* ---- GALLERY ---- */
+    .gallery {
+        margin-top: 50px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+    }
+    .photo-card {
+        position: relative;
+        aspect-ratio: 3 / 4;
+        border-radius: var(--radius);
+        overflow: hidden;
+        border: 2px solid rgba(255,255,255,0.95);
+        box-shadow: 0 14px 36px -22px rgba(223,123,169,0.42);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        background: var(--blush-100);
+    }
+    .photo-card:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: 0 26px 54px -26px rgba(223,123,169,0.55);
+    }
+    .photo-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .photo-card .caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 30px 16px 14px;
+        background: linear-gradient(transparent, rgba(109, 63, 82, 0.72));
+        color: #fff;
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-size: 17px;
+        text-align: center;
+        line-height: 1.3;
+    }
+    @media (max-width: 500px) {
+        .gallery { grid-template-columns: 1fr 1fr; gap: 10px; }
+        .photo-card .caption { font-size: 14px; padding: 20px 10px 10px; }
+    }
+
+    /* ---- CARDS ---- */
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 18px;
+        margin-top: 40px;
+    }
+    .card {
+        background: rgba(255,255,255,0.78);
+        border: 1px solid rgba(255,255,255,0.95);
+        border-radius: var(--radius);
+        padding: 30px 26px;
+        box-shadow: 0 14px 36px -22px rgba(223,123,169,0.42);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 26px 54px -26px rgba(223,123,169,0.55);
+    }
+    .card-icon {
+        display: block;
+        font-size: 26px;
+        color: var(--blush-400);
+        margin-bottom: 14px;
+    }
+    .card h3 {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+        font-size: 22px;
+        color: var(--deep-rose);
+        margin-bottom: 10px;
+    }
+    .card p { font-size: 14px; font-weight: 300; line-height: 1.65; }
+
+    /* ---- QUOTES ---- */
+    .quotes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+        margin-top: 40px;
+    }
+    .quote-card {
+        background: linear-gradient(150deg, #fff, var(--blush-50));
+        border: 1px solid rgba(255,255,255,0.95);
+        border-radius: var(--radius);
+        padding: 30px 28px 24px;
+        box-shadow: 0 14px 36px -24px rgba(223,123,169,0.4);
+        transition: transform 0.4s ease;
+        position: relative;
+    }
+    .quote-card:hover { transform: translateY(-4px); }
+    .quote-card::before {
+        content: "\201C";
+        font-family: 'Cormorant Garamond', serif;
+        position: absolute;
+        top: -6px;
+        left: 20px;
+        font-size: 70px;
+        line-height: 1;
+        color: var(--blush-300);
+        opacity: 0.65;
+    }
+    .quote-card p {
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-size: 19px;
+        line-height: 1.55;
+        color: var(--deep-rose);
+        margin-bottom: 14px;
+        padding-top: 12px;
+    }
+    .quote-card span {
+        display: block;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--blush-500);
+        font-weight: 500;
+    }
+
+    /* ---- LETTER ---- */
+    .letter {
+        margin-top: 30px;
+        padding: 44px clamp(24px, 5vw, 60px);
+        background: linear-gradient(160deg, #fff, var(--blush-50));
+        border-radius: var(--radius);
+        border: 1px solid rgba(255,255,255,0.95);
+        box-shadow: 0 20px 50px -24px rgba(223,123,169,0.45);
+    }
+    .letter p {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.9;
+        margin-bottom: 20px;
+    }
+    .letter p:last-of-type { margin-bottom: 0; }
+    .letter p:first-child::first-letter {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 60px;
+        font-weight: 600;
+        float: left;
+        line-height: 0.8;
+        padding: 8px 14px 0 0;
+        color: var(--blush-500);
+    }
+    .signature {
+        margin-top: 36px;
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-size: 26px;
+        color: var(--deep-rose);
+        text-align: right;
+    }
+    .signature small {
+        display: block;
+        font-family: 'Montserrat', sans-serif;
+        font-style: normal;
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--blush-500);
+        margin-top: 8px;
+    }
+
+    .poem {
+        margin-top: 24px;
+        padding: 44px clamp(24px, 5vw, 60px);
+        background: linear-gradient(160deg, var(--blush-100), #fff 65%, var(--blush-100));
+        border-radius: var(--radius);
+        text-align: center;
+    }
+    .poem p {
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-size: clamp(18px, 2.3vw, 22px);
+        line-height: 1.85;
+        color: var(--deep-rose);
+        margin-bottom: 6px;
+    }
+
+    /* ---- SURPRISE ---- */
+    .love-box {
+        margin-top: 30px;
+        padding: 44px clamp(24px, 5vw, 60px);
+        text-align: center;
+        background: linear-gradient(140deg, var(--blush-100), #fff 60%, var(--blush-100));
+        border-radius: var(--radius);
+        border: 1px solid rgba(255,255,255,0.95);
+    }
+    .love-message {
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-size: clamp(22px, 3.2vw, 30px);
+        line-height: 1.5;
+        color: var(--deep-rose);
+        min-height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .love-message.fade {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    .love-btn {
+        margin-top: 26px;
+        padding: 15px 42px;
+        font-family: inherit;
+        font-size: 13px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        font-weight: 500;
+        color: #fff;
+        background: linear-gradient(135deg, var(--blush-500), var(--blush-400));
+        border: none;
+        border-radius: 999px;
+        cursor: pointer;
+        box-shadow: 0 14px 30px -12px rgba(223,123,169,0.72);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .love-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 40px -14px rgba(223,123,169,0.85);
+    }
+
+    /* ---- ICE MELT ---- */
+    .ice-wrap {
+        position: relative;
+        margin-top: 30px;
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: linear-gradient(160deg, #fff, var(--blush-50));
+        border: 1px solid rgba(255,255,255,0.95);
+        box-shadow: 0 20px 50px -24px rgba(223,123,169,0.45);
+        padding: 60px clamp(24px, 5vw, 60px);
+        min-height: 520px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+    .ice-message { max-width: 560px; }
+    .ice-message .ice-heart {
+        font-size: 46px;
+        color: var(--blush-500);
+        margin-bottom: 16px;
+        line-height: 1;
+    }
+    .ice-message h3 {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+        font-size: clamp(28px, 4vw, 40px);
+        color: var(--deep-rose);
+        line-height: 1.2;
+        margin-bottom: 20px;
+    }
+    .ice-message p {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.8;
+        color: var(--text);
+        margin-bottom: 14px;
+    }
+    .ice-message .ice-small {
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-size: 19px;
+        color: var(--blush-500);
+        margin-top: 20px;
+    }
+    #iceCanvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        touch-action: none;
+        cursor: crosshair;
+    }
+    .ice-hint {
+        position: absolute;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: rgba(138, 78, 102, 0.85);
+        font-weight: 500;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+        z-index: 5;
+        background: rgba(255,255,255,0.6);
+        padding: 8px 18px;
+        border-radius: 999px;
+        white-space: nowrap;
+    }
+    .ice-hint.hide { opacity: 0; }
+
+    /* ---- YANDEX MUSIC PLAYER ---- */
+    .music-player-wrap {
+        max-width: 614px;
+        margin: 30px auto 0;
+        border-radius: var(--radius);
+        overflow: hidden;
+        border: 2px solid rgba(255,255,255,0.95);
+        box-shadow: 0 14px 36px -22px rgba(223,123,169,0.42);
+        background: #fff;
+    }
+    .music-player-wrap iframe {
+        display: block;
+        width: 100%;
+        height: 244px;
+        border: none;
+    }
+    @media (max-width: 650px) {
+        .music-player-wrap iframe { height: 180px; } /* На телефонах Яндекс делает плеер чуть ниже */
+    }
+
+    /* ---- HEARTS ON CLICK ---- */
+    .click-heart {
+        position: fixed;
+        font-size: 28px;
+        color: var(--blush-400);
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%) scale(0.4);
+        animation: pop 1.3s ease-out forwards;
+    }
+    @keyframes pop {
+        0%   { opacity: 1; transform: translate(-50%, -50%) scale(0.4); }
+        35%  { opacity: 1; transform: translate(-50%, -90%) scale(1.25); }
+        100% { opacity: 0; transform: translate(-50%, -180%) scale(0.9); }
+    }
+
+    footer {
+        text-align: center;
+        padding: 40px 20px 60px;
+        color: var(--blush-500);
+        font-size: 11px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+
+    @media (max-width: 600px) {
+        .wrap { padding: 40px 18px 60px; }
+        .nav { padding: 12px 14px; }
+        .nav-btn { padding: 9px 14px; font-size: 11px; letter-spacing: 0.1em; }
+        .letter { padding: 32px 22px; }
+        .poem { padding: 32px 20px; }
+        .love-box { padding: 34px 20px; }
+        .ice-wrap { min-height: 460px; padding: 44px 22px; }
+        .ice-hint { font-size: 10px; padding: 7px 14px; letter-spacing: 0.16em; }
+    }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <button class="nav-btn active" data-page="home">Главная</button>
+        <button class="nav-btn" data-page="reasons">Причины</button>
+        <button class="nav-btn" data-page="quotes">Цитаты</button>
+        <button class="nav-btn" data-page="letter">Письмо</button>
+        <button class="nav-btn" data-page="surprise">Сюрприз</button>
+        <button class="nav-btn" data-page="melt">❄ Растопи лёд</button>
+    </div>
+</nav>
+
+<main class="wrap">
+
+    <!-- ================= ГЛАВНАЯ ================= -->
+    <section class="page active" id="page-home">
+        <div class="hero">
+            <div class="label">Только для тебя</div>
+            <h1 class="hero-title">Ира</h1>
+            <p class="lead">
+                Самая прекрасная девушка во всём мире. Самая любимая.
+                Этот маленький сайт — подарок от моего сердца твоему.
+            </p>
+            <div class="hero-badges">
+                <div class="hero-badge"><span>💗</span> Скоро наш год</div>
+                <div class="hero-badge"><span>❄</span> Новый год вместе</div>
+                <div class="hero-badge"><span>∞</span> И вся жизнь впереди</div>
+            </div>
+        </div>
+
+        <!-- МУЗЫКА (Яндекс.Музыка) -->
+        <div class="music-player-wrap">
+            <iframe frameborder="0" allow="clipboard-write" style="border:none;width:100%;height:244px;" width="100%" height="244" src="https://music.yandex.ru/iframe/album/17438606/track/89100346">Слушайте <a href="https://music.yandex.ru/album/17438606/track/89100346?utm_source=web&utm_medium=copy_link">Заманчивая</a> — <a href="https://music.yandex.ru/artist/5608856">MATRANG</a> на Яндекс Музыке</iframe>
+        </div>
+
+        <!-- ГАЛЕРЕЯ -->
+        <div class="gallery">
+            <div class="photo-card">
+                <img src="ira1.jpg" alt="Ира">
+                <div class="caption">Моя самая красивая</div>
+            </div>
+            <div class="photo-card">
+                <img src="ira2.jpg" alt="Ира">
+                <div class="caption">Ты прекрасна</div>
+            </div>
+            <div class="photo-card">
+                <img src="ira3.jpg" alt="Ира">
+                <div class="caption">С тобой всегда тепло</div>
+            </div>
+            <div class="photo-card">
+                <img src="ira4.jpg" alt="Ира">
+                <div class="caption">Самый счастливый день</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= ПРИЧИНЫ ================= -->
+    <section class="page" id="page-reasons">
+        <div class="label">Несколько причин</div>
+        <h2 class="title">Почему ты — лучшая</h2>
+        <p class="lead">Я мог бы перечислять их бесконечно, но вот хотя бы эти.</p>
+        <div class="cards">
+            <div class="card">
+                <span class="card-icon">1</span>
+                <h3>Твоя улыбка</h3>
+                <p>Она освещает даже самый пасмурный день. Одна улыбка — и мир становится теплее.</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">2</span>
+                <h3>Твои глаза</h3>
+                <p>В них можно утонуть и не захотеть возвращаться. В них весь мой мир.</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">3</span>
+                <h3>Твоя доброта</h3>
+                <p>Ты нежная, заботливая и искренняя. Рядом с тобой хочется быть лучше.</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">4</span>
+                <h3>Твой смех</h3>
+                <p>Самый красивый звук на свете. Готов слушать его бесконечно.</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">5</span>
+                <h3>Твоя искренность</h3>
+                <p>Ты настоящая — без масок и без игры. За это я люблю тебя ещё сильнее.</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">6</span>
+                <h3>Всё в тебе</h3>
+                <p>Каждая мелочь, каждый взгляд — всё в тебе для меня особенное.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= ЦИТАТЫ ================= -->
+    <section class="page" id="page-quotes">
+        <div class="label">Красивые слова</div>
+        <h2 class="title">Цитаты о любви</h2>
+        <p class="lead">Великие говорили о том, что я чувствую к тебе.</p>
+        <div class="quotes-grid">
+            <div class="quote-card">
+                <p>Любовь — это не то, что ты находишь. Любовь — это то, что находит тебя.</p>
+                <span>неизвестный автор</span>
+            </div>
+            <div class="quote-card">
+                <p>В мире нет ничего прекраснее, чем любить и быть любимым.</p>
+                <span>Виктор Гюго</span>
+            </div>
+            <div class="quote-card">
+                <p>Любить — значит видеть человека таким, каким его задумал Бог.</p>
+                <span>Фёдор Достоевский</span>
+            </div>
+            <div class="quote-card">
+                <p>Любовь — единственное, что растёт, когда её отдаёшь.</p>
+                <span>Антуан де Сент-Экзюпери</span>
+            </div>
+            <div class="quote-card">
+                <p>Есть только одна сила во вселенной, которая способна победить всё — это любовь.</p>
+                <span>Эмиль Золя</span>
+            </div>
+            <div class="quote-card">
+                <p>Если бы счастье имело имя, его звали бы Ира.</p>
+                <span>моё сердце</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= ПИСЬМО ================= -->
+    <section class="page" id="page-letter">
+        <div class="label">Письмо</div>
+        <h2 class="title">То, что я хочу сказать</h2>
+        <div class="letter">
+            <p>
+                Ира, любимая, нет на свете девушки красивее тебя. Не потому, что я пристрастен,
+                а потому что это правда. Ты — самое прекрасное, что случилось со мной в жизни.
+            </p>
+            <p>
+                Я люблю тебя безумно: твой голос, улыбку, глаза, мысли, сонную нежность по вечерам.
+                Люблю тебя всю — целиком и без остатка.
+            </p>
+            <p>
+                Ты — моя тихая гавань и моё громкое счастье. Дом, куда хочется возвращаться,
+                и рассвет, ради которого стоит просыпаться.
+            </p>
+            <p>
+                Скоро наш первый год вместе. И знаешь, что я понял? Что хочу провести с тобой
+                каждый следующий Новый год — и каждый обычный день между ними. Хочу, чтобы вся
+                жизнь у нас была общая: одна ёлка, один чай на двоих, один дом.
+            </p>
+            <p>
+                Обещаю быть рядом — в солнечные дни и в трудные. Обещаю слушать, слышать
+                и делать тебя счастливой каждый день.
+            </p>
+            <p>
+                Ты — самая прекрасная девушка во всём мире. И моя самая любимая.
+            </p>
+            <div class="signature">
+                Навсегда твой
+                <small>с любовью</small>
+            </div>
+        </div>
+        <div class="poem">
+            <p>Когда ты рядом — тише дождь и ярче свет,</p>
+            <p>И в мире больше ничего ненужного нет.</p>
+            <p>Твоя улыбка — как рассвет в моей груди,</p>
+            <p>И счастье, что живёт во мне, — лишь впереди.</p>
+            <p>Ира, любимая, ты — жизнь моя и свет,</p>
+            <p>Тебя прекраснее на всей планете нет.</p>
+        </div>
+    </section>
+
+    <!-- ================= СЮРПРИЗ ================= -->
+    <section class="page" id="page-surprise">
+        <div class="label">Маленький сюрприз</div>
+        <h2 class="title">Нажми на кнопку</h2>
+        <div class="love-box">
+            <div class="love-message" id="loveMessage">Ты — моё самое любимое чудо на свете.</div>
+            <button class="love-btn" id="loveBtn" type="button">Показать ещё</button>
+        </div>
+    </section>
+
+    <!-- ================= РАСТОПИ ЛЁД ================= -->
+    <section class="page" id="page-melt">
+        <div class="label">Финальный сюрприз</div>
+        <h2 class="title">Растопи мой лёд</h2>
+        <p class="lead">
+            Проведи пальцем или мышкой по льду — под ним спрятано кое-что важное.
+        </p>
+
+        <div class="ice-wrap" id="iceWrap">
+            <div class="ice-message">
+                <div class="ice-heart">❄</div>
+                <h3>Ира, давай увидимся...</h3>
+                <p>
+                    Я очень соскучился. Хочу обнять тебя, взять за руку
+                    и просто быть рядом — без экранов и расстояний.
+                </p>
+                <p>
+                    Пусть этот Новый год мы встретим вместе. А потом — все остальные.
+                    Потому что я хочу прожить с тобой целую жизнь.
+                </p>
+                <p class="ice-small">Ты — моё тепло среди любого холода.</p>
+            </div>
+            <canvas id="iceCanvas"></canvas>
+            <div class="ice-hint" id="iceHint">☝ Проведи по льду</div>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    Сделано с любовью — для Иры
+</footer>
+
+<script>
+/* ============ НАВИГАЦИЯ ============ */
+(function () {
+    var buttons = document.querySelectorAll('.nav-btn');
+    var pages = document.querySelectorAll('.page');
+
+    function show(pageId) {
+        for (var i = 0; i < pages.length; i++) {
+            pages[i].classList.toggle('active', pages[i].id === 'page-' + pageId);
+        }
+        for (var j = 0; j < buttons.length; j++) {
+            buttons[j].classList.toggle('active', buttons[j].getAttribute('data-page') === pageId);
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (window.location.hash !== '#' + pageId) {
+            history.replaceState(null, '', '#' + pageId);
+        }
+        if (pageId === 'melt' && window.__iceResize) {
+            setTimeout(window.__iceResize, 60);
+        }
+    }
+
+    for (var k = 0; k < buttons.length; k++) {
+        buttons[k].addEventListener('click', function () {
+            show(this.getAttribute('data-page'));
+        });
+    }
+
+    var initial = (window.location.hash || '').replace('#', '');
+    if (initial) show(initial);
+})();
+
+/* ============ СЕРДЕЧКИ НА КЛИК ============ */
+(function () {
+    document.addEventListener('click', function (e) {
+        var t = e.target;
+        if (t.closest && t.closest('.nav, .ice-wrap, button, .music-player-wrap')) return;
+        var heart = document.createElement('span');
+        heart.className = 'click-heart';
+        heart.textContent = '\u2665';
+        heart.style.left = e.clientX + 'px';
+        heart.style.top = e.clientY + 'px';
+        document.body.appendChild(heart);
+        setTimeout(function () {
+            if (heart.parentNode) heart.parentNode.removeChild(heart);
+        }, 1400);
+    });
+})();
+
+/* ============ СЮРПРИЗ: КНОПКА ============ */
+(function () {
+    var messages = [
+        'Ты — моё самое любимое чудо на свете.',
+        'С тобой каждый день похож на маленький праздник.',
+        'Я люблю тебя больше, чем можно выразить словами.',
+        'Ты — причина моей самой искренней улыбки.',
+        'Рядом с тобой весь мир становится добрее.',
+        'Ты — самая красивая девушка во всей вселенной.',
+        'Моё сердце выбрало тебя раз и навсегда.',
+        'Я счастлив просто от того, что ты есть.',
+        'Ты — мой дом, куда всегда хочется возвращаться.',
+        'Люблю тебя сегодня сильнее, чем вчера, и меньше, чем завтра.',
+        'Ты — моя вселенная, в которой хочу остаться навсегда.',
+        'Твоя улыбка — мой личный рассвет.',
+        'Если бы счастье имело имя, его звали бы Ира.',
+        'Ты — лучшее, что случилось со мной в жизни.',
+        'Твоё тепло — самое родное, что я знаю.',
+        'Я влюбляюсь в тебя заново каждый день.',
+        'Ты — моё вдохновение, моя нежность и мой покой.',
+        'Мир с тобой звучит теплее, ярче, красивее.',
+        'Одна твоя улыбка стоит больше тысячи слов.',
+        'Ты — самая прекрасная девушка во всём мире. И моя самая любимая.'
+    ];
+    var index = 0;
+    var messageEl = document.getElementById('loveMessage');
+    var buttonEl = document.getElementById('loveBtn');
+    buttonEl.addEventListener('click', function () {
+        index = (index + 1) % messages.length;
+        messageEl.classList.add('fade');
+        setTimeout(function () {
+            messageEl.textContent = messages[index];
+            messageEl.classList.remove('fade');
+        }, 350);
+    });
+})();
+
+/* ============ РАСТОПИ ЛЁД (canvas) ============ */
+(function () {
+    var wrap   = document.getElementById('iceWrap');
+    var canvas = document.getElementById('iceCanvas');
+    var hint   = document.getElementById('iceHint');
+    if (!wrap || !canvas) return;
+    var ctx = canvas.getContext('2d');
+
+    var drawing = false;
+    var lastCheck = 0;
+    var finished = false;
+    var brush = 55;
+
+    function drawIce(w, h) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        var g = ctx.createLinearGradient(0, 0, w, h);
+        g.addColorStop(0,    '#e6f1f7');
+        g.addColorStop(0.45, '#f3e6f0');
+        g.addColorStop(1,    '#ddeef5');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+
+        for (var i = 0; i < 2600; i++) {
+            var x = Math.random() * w;
+            var y = Math.random() * h;
+            var a = Math.random() * 0.22;
+            ctx.fillStyle = 'rgba(255,255,255,' + a + ')';
+            ctx.fillRect(x, y, 1.4, 1.4);
+        }
+        ctx.strokeStyle = 'rgba(190, 215, 232, 0.45)';
+        ctx.lineWidth = 1;
+        for (var j = 0; j < 28; j++) {
+            ctx.beginPath();
+            var sx = Math.random() * w;
+            var sy = Math.random() * h;
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(sx + (Math.random() - 0.5) * 120, sy + (Math.random() - 0.5) * 120);
+            ctx.stroke();
+        }
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.lineWidth = 1.2;
+        for (var k = 0; k < 8; k++) {
+            ctx.beginPath();
+            var bx = Math.random() * w;
+            var by = Math.random() * h;
+            ctx.moveTo(bx, by);
+            ctx.lineTo(bx + Math.random() * 60, by + Math.random() * 30);
+            ctx.stroke();
+        }
+    }
+
+    function sizeCanvas() {
+        var rect = wrap.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) return;
+        var dpr = window.devicePixelRatio || 1;
+        canvas.width  = Math.round(rect.width  * dpr);
+        canvas.height = Math.round(rect.height * dpr);
+        canvas.style.width  = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        drawIce(rect.width, rect.height);
+        finished = false;
+        canvas.style.opacity = '';
+        canvas.style.display = '';
+        canvas.style.transition = '';
+    }
+
+    window.__iceResize = sizeCanvas;
+    setTimeout(sizeCanvas, 80);
+    window.addEventListener('resize', function () {
+        clearTimeout(window.__iceTimer);
+        window.__iceTimer = setTimeout(sizeCanvas, 180);
+    });
+
+    function eraseAt(x, y) {
+        ctx.globalCompositeOperation = 'destination-out';
+        var grad = ctx.createRadialGradient(x, y, 0, x, y, brush);
+        grad.addColorStop(0,   'rgba(0,0,0,1)');
+        grad.addColorStop(0.65,'rgba(0,0,0,0.95)');
+        grad.addColorStop(1,   'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, brush, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    function pos(e) {
+        var rect = canvas.getBoundingClientRect();
+        return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
+
+    function checkProgress() {
+        if (finished) return;
+        var dpr = window.devicePixelRatio || 1;
+        var step = Math.max(4, Math.floor(4 * 64));
+        var img, data;
+        try {
+            img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            data = img.data;
+        } catch (e) { return; }
+        var total = 0, cleared = 0;
+        for (var i = 3; i < data.length; i += step) {
+            total++;
+            if (data[i] < 40) cleared++;
+        }
+        var ratio = total ? (cleared / total) : 0;
+        if (ratio > 0.55) {
+            finished = true;
+            canvas.style.transition = 'opacity 1.2s ease';
+            canvas.style.opacity = '0';
+            setTimeout(function () { canvas.style.display = 'none'; }, 1250);
+        }
+    }
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (finished) return;
+        drawing = true;
+        hint.classList.add('hide');
+        canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId);
+        var p = pos(e);
+        eraseAt(p.x, p.y);
+        checkProgress();
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (!drawing || finished) return;
+        var p = pos(e);
+        eraseAt(p.x, p.y);
+        var now = Date.now();
+        if (now - lastCheck > 280) { lastCheck = now; checkProgress(); }
+    });
+    function stop() { drawing = false; }
+    canvas.addEventListener('pointerup', stop);
+    canvas.addEventListener('pointercancel', stop);
+    canvas.addEventListener('pointerleave', stop);
+})();
+</script>
+
+</body>
+</html>
